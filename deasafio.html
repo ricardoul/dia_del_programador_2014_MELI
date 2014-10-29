@@ -1,0 +1,116 @@
+<html>
+<h1>Dia del Programador 2014</h1>
+Ejecutar en Consola la funcion 
+<be></br>
+<be></br>
+<be></br>
+caminoAChicas(N,M,posIniX,posIniY,posCafeX,posCafeY,posGolosinaX,posGolosinaY,posChicasX1,posChicasY1,posChicasX2,posChicasY2,posJefeX1,posJefeY1,posJefeX2,posJefeY2) 
+<be></br>
+<be></br>
+Nota:Por defecto la variable pasarPorZonaChicas esta seteada en true, o sea puede pasar por ahi sin restricciones,si esta seteada en false,no pasa por la zona unicamente al final al llevar la golosina.
+<be></br>
+<be></br>
+<b>Ricardo Umpierrez - MLU</b>
+<head>
+	<script type="text/javascript" src="./pathfinding-browser.min.js">
+	</script>
+	<script>
+		function caminoAChicas(N,M,posIniX,posIniY,posCafeX,posCafeY,posGolosinaX,posGolosinaY,posChicasX1,posChicasY1,posChicasX2,posChicasY2,posJefeX1,posJefeY1,posJefeX2,posJefeY2) {
+var finder = new PF.AStarFinder();
+var start = [posIniX,posIniY]; //[7, 1];
+var cafe = [posCafeX, posCafeY];
+var golosinas = [posGolosinaX, posGolosinaY];
+var jefeX1 = [posJefeX1, posJefeY1];
+var jefeX2 = [posJefeX2, posJefeY2];
+var chicasX1 = [posChicasX1, posChicasY1];
+var chicasX2 = [posChicasX2, posChicasY2];
+var grid = new PF.Grid(N, M); 
+var pasarPorZonaChicas=true;
+
+if(posJefeX1>posJefeX2)
+{
+	var aux=posJefeX2;
+	posJefeX2=posJefeX1;
+	posJefeX1=aux;
+	var auy=posJefeY2;
+	posJefeY2=posJefeY1;
+	posJefeY1=auy;
+
+}
+
+if(posChicasX1>posChicasX2)
+{
+	var aux=posChicasX2;
+	posChicasX2=posChicasX1;
+	posChicasX1=aux;
+	var auy=posChicasY2;
+	posChicasY2=posChicasY1;
+	posChicasY1=auy;
+
+}
+
+for (i = posJefeX1; i <= posJefeX2; i++) {
+	for (z = posJefeY1; z <= posJefeY2; z++) {
+		grid.setWalkableAt(i, z, false);
+		
+
+	}
+}
+
+var golosinasChica="";
+var golosinasChicalenght=Infinity;
+for (i = posChicasX1; i <= posChicasX2; i++) {
+	for (z = posChicasY1; z <= posChicasY2; z++) {
+		var golosinasChicaaux= finder.findPath(golosinas[0], golosinas[1], i, z, grid.clone());
+		var golosinasChicastr= JSON.stringify(golosinasChicaaux);
+		if(golosinasChicalenght>golosinasChicastr.length)
+		{
+			golosinasChica=golosinasChicastr;
+			golosinasChicalenght=golosinasChicastr.length;
+
+		}
+	
+	}
+}
+
+var startCafe= finder.findPath(start[0], start[1], cafe[0], cafe[1], grid.clone());
+var gridcafegolosinas=grid.clone();
+var cafeGolosina;
+
+if(!pasarPorZonaChicas)
+{
+	for (i = posChicasX1; i <= posChicasX2; i++) {
+	for (z = posChicasY1; z <= posChicasY2; z++) {
+		gridcafegolosinas.setWalkableAt(i, z, false);
+		
+
+	}
+}
+cafeGolosina= finder.findPath(cafe[0], cafe[1], golosinas[0], golosinas[1], gridcafegolosinas);
+}
+else
+{
+ cafeGolosina= finder.findPath(cafe[0], cafe[1], golosinas[0], golosinas[1], grid.clone());
+}
+
+var startCafestr= JSON.stringify(startCafe);
+var cafeGolosinastr=  JSON.stringify(cafeGolosina);
+var golosinasChicastr= JSON.stringify(golosinasChica);
+startCafestr=(startCafestr.substring(1, startCafestr.length - 1));
+cafeGolosinastr=(cafeGolosinastr.substring(1, cafeGolosinastr.length - 2)).substring(5);
+golosinasChicastr= (golosinasChicastr.substring(1, golosinasChicastr.length - 2)).substring(5);;
+
+
+var ruta=startCafestr+cafeGolosinastr+golosinasChicastr;
+var ruta = ruta.split("[").join("(").split("]").join(")");
+
+var distancia = ruta.split("(").length-1
+
+return "["+ruta+"],"+distancia;
+
+}
+</script>
+</head>
+</html>
+
+
